@@ -13,14 +13,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Login to Tailscale
-        uses: tailscale/action@v1
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v3
         with:
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+          # 如果你的 Tailnet 要求使用 tag 來授權，請加上 tags:
+          # tags: tag:ci
 
       - name: Deploy via Tailscale SSH
         run: |
-          # 這裡我們直接呼叫 Tailscale SSH，不需要 SSH key/config
           tailscale ssh -o StrictHostKeyChecking=no \
             ${{ secrets.CI_CD_USERNAME }}@${{ secrets.TAILSCALE_HOST }} \
-              "cd ~/multi-container-app && bash deploy.sh"
+            "cd ~/multi-container-app && bash deploy.sh"
