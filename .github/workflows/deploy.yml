@@ -13,20 +13,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup SSH key
+      - name: Login to Tailscale
+        uses: tailscale/action@v1
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+
+      - name: Deploy via Tailscale SSH
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.CI_CD_PRIVATE_KEY }}" > ~/.ssh/ci_cd_key
-          chmod 600 ~/.ssh/ci_cd_key
-
-          echo "Host pi" >> ~/.ssh/config
-          echo "  HostName ${{ secrets.TAILSCALE_HOST }}" >> ~/.ssh/config
-          echo "  User ${{ secrets.CI_CD_USERNAME }}" >> ~/.ssh/config
-          echo "  IdentityFile ~/.ssh/ci_cd_key" >> ~/.ssh/config
-          echo "  StrictHostKeyChecking no" >> ~/.ssh/config
-
-      - name: Debug SSH config (optional)
-        run: cat ~/.ssh/config
-
-      - name: Run deploy script on Pi
-        run: ssh pi "cd ~/multi-container-app && bash deploy.sh"
+          # 這裡我們直接呼叫 Tailscale SSH，不需要 SSH key/config
+          tailscale ssh -o StrictHostKeyChecking=no \
+            ${{ secrets.CI_CD_USERNAME }}@${{ secrets.TAILSCALE_HOST }} \
+              "cd ~/multi-container-app && bash deploy.sh"
