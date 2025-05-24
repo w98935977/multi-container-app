@@ -22,6 +22,5 @@ jobs:
 
       - name: Deploy via Tailscale SSH
         run: |
-          tailscale ssh -o StrictHostKeyChecking=no \
-            ${{ secrets.CI_CD_USERNAME }}@${{ secrets.TAILSCALE_HOST }} \
+          tailscale ssh ${{ secrets.CI_CD_USERNAME }}@${{ secrets.TAILSCALE_HOST }} \
             "cd ~/multi-container-app && bash deploy.sh"
