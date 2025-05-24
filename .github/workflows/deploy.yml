@@ -16,14 +16,16 @@ jobs:
       - name: Setup SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.CI_CD_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          echo "${{ secrets.CI_CD_PRIVATE_KEY }}" > ~/.ssh/ci_cd_key
+          chmod 600 ~/.ssh/ci_cd_key
+
           echo "Host pi" >> ~/.ssh/config
           echo "  HostName ${{ secrets.TAILSCALE_HOST }}" >> ~/.ssh/config
           echo "  User ${{ secrets.CI_CD_USERNAME }}" >> ~/.ssh/config
+          echo "  IdentityFile ~/.ssh/ci_cd_key" >> ~/.ssh/config
           echo "  StrictHostKeyChecking no" >> ~/.ssh/config
-      
-      - name: Debug SSH config
+
+      - name: Debug SSH config (optional)
         run: cat ~/.ssh/config
 
       - name: Run deploy script on Pi
