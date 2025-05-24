@@ -1,4 +1,4 @@
-name: Deploy via Tailscale SSH
+name: Deploy on Pi
 
 on:
   push:
@@ -7,17 +7,14 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    # 這裡指定用 self-hosted runner
+    runs-on: self-hosted
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Connect to Tailscale
-        uses: tailscale/github-action@v3
-        with:
-          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
-
-      - name: Deploy via Tailscale SSH
+      - name: Run deploy script
         run: |
-          tailscale ssh --accept-host-key \
-            ${{ secrets.CI_CD_USERNAME }}@${{ secrets.TAILSCALE_HOST }} \
-            "cd ~/multi-container-app && bash deploy.sh"
+          cd ~/multi-container-app
+          bash deploy.sh
