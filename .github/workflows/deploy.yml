@@ -1,0 +1,27 @@
+name: Deploy via Tailscale SSH
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.CI_CD_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo "Host pi" >> ~/.ssh/config
+          echo "  HostName ${{ secrets.TAILSCALE_HOST }}" >> ~/.ssh/config
+          echo "  User ${{ secrets.CI_CD_USERNAME }}" >> ~/.ssh/config
+          echo "  StrictHostKeyChecking no" >> ~/.ssh/config
+
+      - name: Run deploy script on Pi
+        run: ssh pi "cd ~/multi-container-app && bash deploy.sh"
