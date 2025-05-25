@@ -1,0 +1,28 @@
+# Node.js dependencies
+**/node_modules/
+
+# VSCode 及編輯器設定
+.vscode/
+*.code-workspace
+
+# 系統檔案
+.DS_Store
+Thumbs.db
+
+# Docker 產生的匿名卷或網路
+docker-compose.override.yml
+docker-compose.*.yml   # 只要你專案裡有其他 compose 檔
+
+# GitHub Actions Runner
+/actions-runner/
+/_runnerwork/
+
+# Grafana 資料
+grafana-storage/
+
+# 臨時檔案 / 日誌
+*.log
+*.tmp
+
+# 環境變數檔
+.env
